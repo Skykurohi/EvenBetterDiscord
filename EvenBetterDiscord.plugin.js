@@ -76,6 +76,14 @@ EvenBetterDiscord.prototype.loadEmotes = function (targetFile)
     {
         if (data)
         {
+            let emoteData = JSON.parse(data);
+
+            if (!emoteData)
+            {
+                //console.log("Failed to parse emotes file!");
+                return;
+            }
+
             window.emotesFfz = JSON.parse(data);
             //console.log("Loaded emotes file!");
         }
