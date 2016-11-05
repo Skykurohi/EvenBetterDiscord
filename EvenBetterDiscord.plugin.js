@@ -58,10 +58,11 @@ EvenBetterDiscord.prototype.loadEBDFiles = function ()
 
                 fs.writeFile(mEBD.emotesFile, body, (err) =>
                 {
-                    //console.log("Retreived new emotes file!");
-
                     if (!err)
+                    {
+                        //console.log("Retreived new emotes file!");
                         fs.writeFile(mEBD.preferencesFile, JSON.stringify({ currentHash: mEBD.latestHash }), null);
+                    }
 
                     this.loadEmotes(mEBD.emotesFile);
                 });
