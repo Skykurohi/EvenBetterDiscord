@@ -84,7 +84,7 @@ EvenBetterDiscord.prototype.loadEmotes = function (targetFile)
                 return;
             }
 
-            window.emotesFfz = JSON.parse(data);
+            window.emotesFfz = emoteData;
             //console.log("Loaded emotes file!");
         }
     });
