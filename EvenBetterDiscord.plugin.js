@@ -3,20 +3,19 @@
 let request = require('request');
 let fs = require('fs');
 
-let mEBD = {};
+let EvenBetterDiscord = function ()
+{
+    this.targetAPI = "https://api.github.com/repos/DeathStrikeV/BetterDiscordApp/commits/master";
+    this.targetURL = "https://raw.githubusercontent.com/DeathStrikeV/BetterDiscordApp/master/data/emotedata_ffz.json";
 
-mEBD.targetAPI = "https://api.github.com/repos/DeathStrikeV/BetterDiscordApp/commits/master";
-mEBD.targetURL = "https://raw.githubusercontent.com/DeathStrikeV/BetterDiscordApp/master/data/emotedata_ffz.json";
+    this.bdPath = (process.platform == "win32" ?
+        process.env.APPDATA : process.platform == "darwin" ?
+        process.env.HOME + "/Library/Preferences/" : "/var/local/") + "/BetterDiscord/";
 
-mEBD.bdPath = (process.platform == "win32" ?
-	process.env.APPDATA : process.platform == "darwin" ?
-	process.env.HOME + "/Library/Preferences/" : "/var/local/") + "/BetterDiscord/";
-
-mEBD.preferencesFile = mEBD.bdPath + "/EBD_Preferences.json";
-mEBD.emotesFile = mEBD.bdPath + "/EBD_Emotes.json";
-mEBD.defaultEmotesFile = mEBD.bdPath + "/emotes_ffz.json";
-
-let EvenBetterDiscord = function () { };
+    this.preferencesFile = this.bdPath + "/EBD_Preferences.json";
+    this.emotesFile = this.bdPath + "/EBD_Emotes.json";
+    this.defaultEmotesFile = this.bdPath + "/emotes_ffz.json";
+};
 
 EvenBetterDiscord.prototype.start = function ()
 {
@@ -25,50 +24,58 @@ EvenBetterDiscord.prototype.start = function ()
 
 EvenBetterDiscord.prototype.loadEBDFiles = function ()
 {
-    fs.readFile(mEBD.preferencesFile, "utf8", (err, data) =>
+    let readPreferencesFile = function (err, data)
     {
         if (data)
-            mEBD.currentHash = JSON.parse(data).currentHash;
+            this.currentHash = JSON.parse(data).currentHash;
         else
-            mEBD.currentHash = "";
+            this.currentHash = "";
 
-        request({ url: mEBD.targetAPI, headers: { "User-Agent": "DeathStrikeV" } }, (error, response, body) =>
+        request({ url: this.targetAPI, headers: { "User-Agent": "DeathStrikeV" } }, requestPluginHash.bind(this));
+    };
+
+    let requestPluginHash = function (error, response, body)
+    {
+        if (response.statusCode !== 200)
         {
-            if (response.statusCode !== 200)
-            {
-                this.loadEmotes(mEBD.emotesFile);
-                return;
-            }
+            this.loadEmotes(this.emotesFile);
+            return;
+        }
 
-            mEBD.latestHash = JSON.parse(body).sha;
+        this.latestHash = JSON.parse(body).sha;
 
-            if (mEBD.currentHash === mEBD.latestHash)
-            {
-                this.loadEmotes(mEBD.emotesFile);
-                return;
-            }
+        if (this.currentHash === this.latestHash)
+        {
+            this.loadEmotes(this.emotesFile);
+            return;
+        }
 
-            request(mEBD.targetURL, (error, response, body) =>
-            {
-                if (response.statusCode !== 200)
-                {
-                    this.loadEmotes(mEBD.emotesFile);
-                    return;
-                }
+        request(this.targetURL, downloadEmotesFile.bind(this));
+    };
 
-                fs.writeFile(mEBD.emotesFile, body, (err) =>
-                {
-                    if (!err)
-                    {
-                        //console.log("Retreived new emotes file!");
-                        fs.writeFile(mEBD.preferencesFile, JSON.stringify({ currentHash: mEBD.latestHash }), null);
-                    }
+    let downloadEmotesFile = function (error, response, body)
+    {
+        if (response.statusCode !== 200)
+        {
+            this.loadEmotes(this.emotesFile);
+            return;
+        }
 
-                    this.loadEmotes(mEBD.emotesFile);
-                });
-            });
-        });
-    });
+        fs.writeFile(this.emotesFile, body, saveEmotesFile.bind(this));
+    };
+
+    let saveEmotesFile = function (err)
+    {
+        if (!err)
+        {
+            //console.log("Retreived new emotes file!");
+            fs.writeFile(this.preferencesFile, JSON.stringify({ currentHash: this.latestHash }), null);
+        }
+
+        this.loadEmotes(this.emotesFile);
+    }
+
+    fs.readFile(this.preferencesFile, "utf8", readPreferencesFile.bind(this));
 };
 
 EvenBetterDiscord.prototype.loadEmotes = function (targetFile)
@@ -94,25 +101,25 @@ EvenBetterDiscord.prototype.loadEmotes = function (targetFile)
 EvenBetterDiscord.prototype.stop = function ()
 {
     this.removeEBDFiles();
-    this.loadEmotes(mEBD.defaultEmotesFile);
+    this.loadEmotes(this.defaultEmotesFile);
 };
 
 EvenBetterDiscord.prototype.removeEBDFiles = function ()
 {
-    fs.stat(mEBD.preferencesFile, (err, stats) =>
+    fs.stat(this.preferencesFile, (err, stats) =>
     {
         if (err)
             return;
 
-        fs.unlink(mEBD.preferencesFile, (err) => { });
+        fs.unlink(this.preferencesFile, (err) => { });
     });
 
-    fs.stat(mEBD.emotesFile, (err, stats) =>
+    fs.stat(this.emotesFile, (err, stats) =>
     {
         if (err)
             return;
 
-        fs.unlink(mEBD.emotesFile, (err) => { });
+        fs.unlink(this.emotesFile, (err) => { });
     });
 };
 
