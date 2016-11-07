@@ -31,10 +31,10 @@ EvenBetterDiscord.prototype.loadEBDFiles = function ()
         else
             this.currentHash = "";
 
-        request({ url: this.targetAPI, headers: { "User-Agent": "DeathStrikeV" } }, requestPluginHash.bind(this));
+        request({ url: this.targetAPI, headers: { "User-Agent": "DeathStrikeV" } }, requestRepoHash.bind(this));
     };
 
-    let requestPluginHash = function (error, response, body)
+    let requestRepoHash = function (error, response, body)
     {
         if (response.statusCode !== 200)
         {
