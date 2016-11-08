@@ -31,6 +31,12 @@ EvenBetterDiscord.prototype.loadEBDFiles = function ()
         else
             this.currentHash = "";
 
+        if (this.currentHash === "ignore")
+        {
+            this.loadEmotes(this.emotesFile);
+            return;
+        }
+
         request({ url: this.targetAPI, headers: { "User-Agent": "DeathStrikeV" } }, requestRepoHash.bind(this));
     };
 
