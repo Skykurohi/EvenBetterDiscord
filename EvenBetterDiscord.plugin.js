@@ -100,8 +100,29 @@ EvenBetterDiscord.prototype.loadEmotes = function (targetFile)
 
             window.emotesFfz = emoteData;
             //console.log("Loaded emotes file!");
-        }
+
+            //this.fixBrokenFavorites();
+        }  
     });
+};
+
+EvenBetterDiscord.prototype.fixBrokenFavorites = function ()
+{
+    let result;
+    let regex = new RegExp("\"([\\w!]+(?:~\\d+)?)\":\"https:\\/\\/cdn\\.frankerfacez\\.com\\/emoticon\\/\\d+", "g");
+    let brokenFavorites = atob(localStorage.bdfavemotes);
+    let fixedFavorites = brokenFavorites;
+
+    while (result = regex.exec(brokenFavorites))
+    {
+        let replacementRegex = new RegExp("\"" + result[1] + "\":\"https:\\/\\/cdn\\.frankerfacez\\.com\\/emoticon\\/\\d+", "g");
+        let replacementString = "\"" + result[1] + "\":\"https://cdn.frankerfacez.com/emoticon/" + emotesFfz[result[1]];
+        fixedFavorites = fixedFavorites.replace(replacementRegex, replacementString);
+    }
+
+    localStorage.bdfavemotes = btoa(fixedFavorites);
+    quickEmoteMenu.favoriteEmotes = JSON.parse(fixedFavorites);
+    quickEmoteMenu.updateFavorites();
 };
 
 EvenBetterDiscord.prototype.stop = function ()
