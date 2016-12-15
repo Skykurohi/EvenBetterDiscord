@@ -109,7 +109,7 @@ EvenBetterDiscord.prototype.loadEmotes = function (targetFile)
 EvenBetterDiscord.prototype.fixBrokenFavorites = function ()
 {
     let result;
-    let regex = new RegExp("\"([\\w!]+(?:~\\d+)?)\":\"https:\\/\\/cdn\\.frankerfacez\\.com\\/emoticon\\/\\d+", "g");
+    let regex = new RegExp("\"([\\w!]+(?:~\\d+)?)\":\"https:\\/\\/cdn\\.frankerfacez\\.com\\/emoticon\\/\\d*\\/", "g");
     let brokenFavorites = atob(localStorage.bdfavemotes);
     let fixedFavorites = brokenFavorites;
 
@@ -118,7 +118,7 @@ EvenBetterDiscord.prototype.fixBrokenFavorites = function ()
         if (!emotesFfz[result[1]])
             continue;
 
-        let replacementRegex = new RegExp("\"" + result[1] + "\":\"https:\\/\\/cdn\\.frankerfacez\\.com\\/emoticon\\/\\d+", "g");
+        let replacementRegex = new RegExp("\"" + result[1] + "\":\"https:\\/\\/cdn\\.frankerfacez\\.com\\/emoticon\\/\\d*\\/", "g");
         let replacementString = "\"" + result[1] + "\":\"https://cdn.frankerfacez.com/emoticon/" + emotesFfz[result[1]];
         fixedFavorites = fixedFavorites.replace(replacementRegex, replacementString);
     }
