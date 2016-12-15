@@ -119,7 +119,7 @@ EvenBetterDiscord.prototype.fixBrokenFavorites = function ()
             continue;
 
         let replacementRegex = new RegExp("\"" + result[1] + "\":\"https:\\/\\/cdn\\.frankerfacez\\.com\\/emoticon\\/\\d*\\/", "g");
-        let replacementString = "\"" + result[1] + "\":\"https://cdn.frankerfacez.com/emoticon/" + emotesFfz[result[1]];
+        let replacementString = "\"" + result[1] + "\":\"https://cdn.frankerfacez.com/emoticon/" + emotesFfz[result[1]] + "/";
         fixedFavorites = fixedFavorites.replace(replacementRegex, replacementString);
     }
 
