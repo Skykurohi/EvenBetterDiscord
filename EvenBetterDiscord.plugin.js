@@ -101,8 +101,7 @@ EvenBetterDiscord.prototype.loadEmotes = function (targetFile)
             window.emotesFfz = emoteData;
             //console.log("Loaded emotes file!");
 
-            //TODO: Replace localstorage
-            //this.fixBrokenFavorites();
+            this.fixBrokenFavorites();
         }  
     });
 };
@@ -174,7 +173,7 @@ EvenBetterDiscord.prototype.getDescription = function ()
 
 EvenBetterDiscord.prototype.getVersion = function ()
 {
-    return "1.1.1";
+    return "1.1.2";
 };
 
 EvenBetterDiscord.prototype.getAuthor = function ()
