@@ -172,7 +172,7 @@ EvenBetterDiscord.prototype.getDescription = function ()
 
 EvenBetterDiscord.prototype.getVersion = function ()
 {
-    return "1.1.0";
+    return "1.1.1";
 };
 
 EvenBetterDiscord.prototype.getAuthor = function ()
