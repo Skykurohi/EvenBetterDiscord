@@ -101,15 +101,17 @@ EvenBetterDiscord.prototype.loadEmotes = function (targetFile)
             window.emotesFfz = emoteData;
             //console.log("Loaded emotes file!");
 
-            // TODO: Replace localstorage
-            if (typeof localStorage !== "undefined")
-                this.fixBrokenFavorites();
+            //TODO: Replace localstorage
+            //this.fixBrokenFavorites();
         }  
     });
 };
 
 EvenBetterDiscord.prototype.fixBrokenFavorites = function ()
 {
+    if (typeof localStorage !== "undefined")
+        return;
+
     let result;
     let regex = new RegExp("\"([\\w!]+(?:~\\d+)?)\":\"https:\\/\\/cdn\\.frankerfacez\\.com\\/emoticon\\/\\d*\\/", "g");
     let brokenFavorites = atob(localStorage.bdfavemotes);
