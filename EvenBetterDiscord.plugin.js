@@ -108,7 +108,7 @@ EvenBetterDiscord.prototype.loadEmotes = function (targetFile)
 
 EvenBetterDiscord.prototype.fixBrokenFavorites = function ()
 {
-    if (typeof localStorage !== "undefined")
+    if (typeof localStorage === "undefined")
         return;
 
     let result;
