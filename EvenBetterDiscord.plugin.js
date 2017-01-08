@@ -101,7 +101,9 @@ EvenBetterDiscord.prototype.loadEmotes = function (targetFile)
             window.emotesFfz = emoteData;
             //console.log("Loaded emotes file!");
 
-            this.fixBrokenFavorites();
+            // TODO: Replace localstorage
+            if (typeof localStorage !== "undefined")
+                this.fixBrokenFavorites();
         }  
     });
 };
