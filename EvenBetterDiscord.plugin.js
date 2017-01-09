@@ -108,13 +108,13 @@ EvenBetterDiscord.prototype.loadEmotes = function (targetFile)
 
 EvenBetterDiscord.prototype.fixBrokenFavorites = function ()
 {
-    if (typeof localStorage === "undefined")
-        return;
-
     let result;
     let regex = new RegExp("\"([\\w!]+(?:~\\d+)?)\":\"https:\\/\\/cdn\\.frankerfacez\\.com\\/emoticon\\/\\d*\\/", "g");
-    let brokenFavorites = atob(localStorage.bdfavemotes);
+    let brokenFavorites = atob(bdStorage.get("bdfavemotes"));
     let fixedFavorites = brokenFavorites;
+
+    if (!brokenFavorites)
+        return;
 
     while (result = regex.exec(brokenFavorites))
     {
@@ -126,7 +126,7 @@ EvenBetterDiscord.prototype.fixBrokenFavorites = function ()
         fixedFavorites = fixedFavorites.replace(replacementRegex, replacementString);
     }
 
-    localStorage.bdfavemotes = btoa(fixedFavorites);
+    bdStorage.set("bdfavemotes", btoa(fixedFavorites));
     quickEmoteMenu.favoriteEmotes = JSON.parse(fixedFavorites);
     quickEmoteMenu.updateFavorites();
 };
@@ -173,7 +173,7 @@ EvenBetterDiscord.prototype.getDescription = function ()
 
 EvenBetterDiscord.prototype.getVersion = function ()
 {
-    return "1.1.2";
+    return "1.1.3";
 };
 
 EvenBetterDiscord.prototype.getAuthor = function ()
