@@ -1,5 +1,6 @@
 //META{"name":"EvenBetterDiscord"}*//
 
+// Self Installer by noodlebox (https://gist.github.com/noodlebox/21cdde481cb812cf212c352a4ce5289b)
 /*@cc_on
 @if (@_jscript)
     // Offer to self-install for clueless users that try to run this directly.
