@@ -1,7 +1,7 @@
 //META{"name":"EvenBetterDiscord"}*//
 
 // Self Installer by noodlebox (https://gist.github.com/noodlebox/21cdde481cb812cf212c352a4ce5289b)
-/*@cc_on
+/* @cc_on
 @if (@_jscript)
     // Offer to self-install for clueless users that try to run this directly.
     var shell = WScript.CreateObject("WScript.Shell");
@@ -23,58 +23,54 @@
     WScript.Quit();
 @else @*/
 
-let request = require('request');
-let fs = require('fs');
+/* eslint no-use-before-define: 0 */
+/* eslint no-empty-function: 0 */
+/* eslint spaced-comment: 0 */
 
-let EvenBetterDiscord = function ()
-{
-    this.targetAPI = "https://api.github.com/repos/DeathStrikeV/BetterDiscordApp/commits/master";
-    this.targetURL = "https://raw.githubusercontent.com/DeathStrikeV/BetterDiscordApp/master/data/emotedata_ffz.json";
+let request = require(`request`);
+let fs = require(`fs`);
 
-    this.bdPath = (process.platform == "win32" ?
-        process.env.APPDATA : process.platform == "darwin" ?
-        process.env.HOME + "/Library/Preferences/" : "/var/local/") + "/BetterDiscord/";
+let EvenBetterDiscord = function() {
+    this.targetAPI = `https://api.github.com/repos/DeathStrikeV/BetterDiscordApp/commits/master`;
+    this.targetURL = `https://raw.githubusercontent.com/DeathStrikeV/BetterDiscordApp/master/data/emotedata_ffz.json`;
 
-    this.preferencesFile = this.bdPath + "/EBD_Preferences.json";
-    this.emotesFile = this.bdPath + "/EBD_Emotes.json";
-    this.defaultEmotesFile = this.bdPath + "/emotes_ffz.json";
+    this.bdPath = `${process.platform === `win32`
+        ? process.env.APPDATA : process.platform === `darwin`
+            ? `${process.env.HOME}/Library/Preferences/` : `/var/local/`}/BetterDiscord/`;
+
+    this.preferencesFile = `${this.bdPath}/EBD_Preferences.json`;
+    this.emotesFile = `${this.bdPath}/EBD_Emotes.json`;
+    this.defaultEmotesFile = `${this.bdPath}/emotes_ffz.json`;
 };
 
-EvenBetterDiscord.prototype.start = function ()
-{
+EvenBetterDiscord.prototype.start = function() {
     this.loadEBDFiles();
 };
 
-EvenBetterDiscord.prototype.loadEBDFiles = function ()
-{
-    let readPreferencesFile = function (err, data)
-    {
-        if (data)
-            this.currentHash = JSON.parse(data).currentHash;
-        else
-            this.currentHash = "";
+EvenBetterDiscord.prototype.loadEBDFiles = function() {
+    let readPreferencesFile = function(err, data) {
+        if (data) { this.currentHash = JSON.parse(data).currentHash; } else { this.currentHash = ``; }
 
-        if (this.currentHash === "ignore")
-        {
+        if (this.currentHash === `ignore`) {
             this.loadEmotes(this.emotesFile);
             return;
         }
 
-        request({ url: this.targetAPI, headers: { "User-Agent": "DeathStrikeV" } }, requestRepoHash.bind(this));
+        request({
+            "url"     : this.targetAPI,
+            "headers" : {"User-Agent": `DeathStrikeV`},
+        }, requestRepoHash.bind(this));
     };
 
-    let requestRepoHash = function (error, response, body)
-    {
-        if (response.statusCode !== 200)
-        {
+    let requestRepoHash = function(error, response, body) {
+        if (response.statusCode !== 200) {
             this.loadEmotes(this.emotesFile);
             return;
         }
 
         this.latestHash = JSON.parse(body).sha;
 
-        if (this.currentHash === this.latestHash)
-        {
+        if (this.currentHash === this.latestHash) {
             this.loadEmotes(this.emotesFile);
             return;
         }
@@ -82,10 +78,8 @@ EvenBetterDiscord.prototype.loadEBDFiles = function ()
         request(this.targetURL, downloadEmotesFile.bind(this));
     };
 
-    let downloadEmotesFile = function (error, response, body)
-    {
-        if (response.statusCode !== 200)
-        {
+    let downloadEmotesFile = function(error, response, body) {
+        if (response.statusCode !== 200) {
             this.loadEmotes(this.emotesFile);
             return;
         }
@@ -93,115 +87,100 @@ EvenBetterDiscord.prototype.loadEBDFiles = function ()
         fs.writeFile(this.emotesFile, body, saveEmotesFile.bind(this));
     };
 
-    let saveEmotesFile = function (err)
-    {
-        if (!err)
-        {
-            //console.log("Retreived new emotes file!");
-            fs.writeFile(this.preferencesFile, JSON.stringify({ currentHash: this.latestHash }), null);
+    let saveEmotesFile = function(err) {
+        if (!err) {
+            // console.log("Retreived new emotes file!");
+            fs.writeFile(this.preferencesFile, JSON.stringify({"currentHash": this.latestHash}), null);
         }
 
         this.loadEmotes(this.emotesFile);
-    }
+    };
 
-    fs.readFile(this.preferencesFile, "utf8", readPreferencesFile.bind(this));
+    fs.readFile(this.preferencesFile, `utf8`, readPreferencesFile.bind(this));
 };
 
-EvenBetterDiscord.prototype.loadEmotes = function (targetFile)
-{
-    fs.readFile(targetFile, "utf8", (err, data) =>
-    {
-        if (data)
-        {
+EvenBetterDiscord.prototype.loadEmotes = function(targetFile) {
+    fs.readFile(targetFile, `utf8`, (err, data) => {
+        if (data) {
             let emoteData = JSON.parse(data);
 
-            if (!emoteData)
-            {
-                //console.log("Failed to parse emotes file!");
+            if (!emoteData) {
+                console.log(`Failed to parse emotes file!`);
                 return;
             }
 
             window.emotesFfz = emoteData;
-            //console.log("Loaded emotes file!");
+
+            // BandagedBetterDiscord Fix
+            if (window.bdEmotes && window.bdEmotes.FrankerFaceZ) {
+                for (let emote in window.emotesFfz) { window.bdEmotes.FrankerFaceZ[emote] = `https://cdn.frankerfacez.com/emoticon/${window.emotesFfz[emote]}/1`; }
+            }
+            console.log(`Loaded emotes file!`);
 
             this.fixBrokenFavorites();
-        }  
+        }
     });
 };
 
-EvenBetterDiscord.prototype.fixBrokenFavorites = function ()
-{
+EvenBetterDiscord.prototype.fixBrokenFavorites = function() {
     let result;
-    let regex = new RegExp("\"([\\w!]+(?:~\\d+)?)\":\"https:\\/\\/cdn\\.frankerfacez\\.com\\/emoticon\\/\\d*\\/", "g");
-    let brokenFavorites = atob(bdStorage.get("bdfavemotes"));
+    let regex = new RegExp(`"([\\w!]+(?:~\\d+)?)":"https:\\/\\/cdn\\.frankerfacez\\.com\\/emoticon\\/\\d*\\/`, `g`);
+    let brokenFavorites = atob(bdStorage.get(`bdfavemotes`));
     let fixedFavorites = brokenFavorites;
 
-    if (!brokenFavorites)
-        return;
+    if (!brokenFavorites) { return; }
 
-    while (result = regex.exec(brokenFavorites))
-    {
-        if (!emotesFfz[result[1]])
-            continue;
+    while (result = regex.exec(brokenFavorites)) {
+        if (!emotesFfz[result[1]]) { continue; }
 
-        let replacementRegex = new RegExp("\"" + result[1] + "\":\"https:\\/\\/cdn\\.frankerfacez\\.com\\/emoticon\\/\\d*\\/", "g");
-        let replacementString = "\"" + result[1] + "\":\"https://cdn.frankerfacez.com/emoticon/" + emotesFfz[result[1]] + "/";
+        let replacementRegex = new RegExp(`"${result[1]}":"https:\\/\\/cdn\\.frankerfacez\\.com\\/emoticon\\/\\d*\\/`, `g`);
+        let replacementString = `"${result[1]}":"https://cdn.frankerfacez.com/emoticon/${emotesFfz[result[1]]}/`;
         fixedFavorites = fixedFavorites.replace(replacementRegex, replacementString);
     }
 
-    bdStorage.set("bdfavemotes", btoa(fixedFavorites));
+    bdStorage.set(`bdfavemotes`, btoa(fixedFavorites));
     quickEmoteMenu.favoriteEmotes = JSON.parse(fixedFavorites);
     quickEmoteMenu.updateFavorites();
 };
 
-EvenBetterDiscord.prototype.stop = function ()
-{
+EvenBetterDiscord.prototype.stop = function() {
     this.removeEBDFiles();
     this.loadEmotes(this.defaultEmotesFile);
 };
 
-EvenBetterDiscord.prototype.removeEBDFiles = function ()
-{
-    fs.stat(this.preferencesFile, (err, stats) =>
-    {
-        if (err)
-            return;
+EvenBetterDiscord.prototype.removeEBDFiles = function() {
+    fs.stat(this.preferencesFile, (err, stats) => {
+        if (err) { return; }
 
-        fs.unlink(this.preferencesFile, (err) => { });
+        fs.unlink(this.preferencesFile);
     });
 
-    fs.stat(this.emotesFile, (err, stats) =>
-    {
-        if (err)
-            return;
+    fs.stat(this.emotesFile, (err, stats) => {
+        if (err) { return; }
 
-        fs.unlink(this.emotesFile, (err) => { });
+        fs.unlink(this.emotesFile);
     });
 };
 
-EvenBetterDiscord.prototype.load = function () { };
-EvenBetterDiscord.prototype.unload = function () { };
-EvenBetterDiscord.prototype.onMessage = function () { };
-EvenBetterDiscord.prototype.onSwitch = function () { };
+EvenBetterDiscord.prototype.load = function() {};
+EvenBetterDiscord.prototype.unload = function() {};
+EvenBetterDiscord.prototype.onMessage = function() {};
+EvenBetterDiscord.prototype.onSwitch = function() {};
 
-EvenBetterDiscord.prototype.getName = function ()
-{
-    return "EvenBetterDiscord";
+EvenBetterDiscord.prototype.getName = function() {
+    return `EvenBetterDiscord`;
 };
 
-EvenBetterDiscord.prototype.getDescription = function ()
-{
-    return "Loads FFZ emotes from alternate repository";
+EvenBetterDiscord.prototype.getDescription = function() {
+    return `Loads FFZ emotes from alternate repository`;
 };
 
-EvenBetterDiscord.prototype.getVersion = function ()
-{
-    return "1.1.4";
+EvenBetterDiscord.prototype.getVersion = function() {
+    return `1.1.5`;
 };
 
-EvenBetterDiscord.prototype.getAuthor = function ()
-{
-    return "DeathStrikeV";
+EvenBetterDiscord.prototype.getAuthor = function() {
+    return `DeathStrikeV`;
 };
 
-/*@end @*/
+/* @end @*/
