@@ -44,7 +44,7 @@ let EvenBetterDiscord = function() {
 };
 
 EvenBetterDiscord.prototype.start = function() {
-    this.loadEBDFiles();
+    setTimeout(this.loadEBDFiles.bind(this), 10000);
 };
 
 EvenBetterDiscord.prototype.loadEBDFiles = function() {
@@ -90,7 +90,7 @@ EvenBetterDiscord.prototype.loadEBDFiles = function() {
     let saveEmotesFile = function(err) {
         if (!err) {
             // console.log("Retreived new emotes file!");
-            fs.writeFile(this.preferencesFile, JSON.stringify({"currentHash": this.latestHash}), null);
+            fs.writeFile(this.preferencesFile, JSON.stringify({"currentHash": this.latestHash}), () => {});
         }
 
         this.loadEmotes(this.emotesFile);
@@ -117,7 +117,7 @@ EvenBetterDiscord.prototype.loadEmotes = function(targetFile) {
             }
             console.log(`Loaded emotes file!`);
 
-            this.fixBrokenFavorites();
+            //this.fixBrokenFavorites();
         }
     });
 };
@@ -176,7 +176,7 @@ EvenBetterDiscord.prototype.getDescription = function() {
 };
 
 EvenBetterDiscord.prototype.getVersion = function() {
-    return `1.1.5`;
+    return `1.1.6`;
 };
 
 EvenBetterDiscord.prototype.getAuthor = function() {
