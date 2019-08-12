@@ -31,8 +31,8 @@ let request = require(`request`);
 let fs = require(`fs`);
 
 let EvenBetterDiscord = function() {
-    this.targetAPI = `https://api.github.com/repos/DeathStrikeV/BetterDiscordApp/commits/master`;
-    this.targetURL = `https://raw.githubusercontent.com/DeathStrikeV/BetterDiscordApp/master/data/emotedata_ffz.json`;
+    this.targetAPI = `https://api.github.com/repos/Skykurohi/BetterDiscordApp/commits/master`;
+    this.targetURL = `https://raw.githubusercontent.com/Skykurohi/BetterDiscordApp/master/data/emotedata_ffz.json`;
 
     this.bdPath = `${process.platform === `win32`
         ? process.env.APPDATA : process.platform === `darwin`
@@ -58,7 +58,7 @@ EvenBetterDiscord.prototype.loadEBDFiles = function() {
 
         request({
             "url"     : this.targetAPI,
-            "headers" : {"User-Agent": `DeathStrikeV`},
+            "headers" : {"User-Agent": `Skykurohi`},
         }, requestRepoHash.bind(this));
     };
 
@@ -176,11 +176,11 @@ EvenBetterDiscord.prototype.getDescription = function() {
 };
 
 EvenBetterDiscord.prototype.getVersion = function() {
-    return `1.1.6`;
+    return `1.1.7`;
 };
 
 EvenBetterDiscord.prototype.getAuthor = function() {
-    return `DeathStrikeV`;
+    return `BlazingSky`;
 };
 
 /* @end @*/
